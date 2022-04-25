@@ -10,6 +10,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CommentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCommentBinding
+    private val commentAdapter = CommentAdapter()
     private val commentViewModel: CommentViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +25,10 @@ class CommentActivity : AppCompatActivity() {
         commentViewModel.getAllComment().observe(this){
             when (it) {
                 is Resource.Loading -> Log.i("CEK", "Loading")
-                is Resource.Success -> it.data?.let { it2 -> Log.i("CEK2", "data") }
+                is Resource.Success -> it.data?.let { it2 ->
+                    commentAdapter.setData(it2)
+                    binding.rvComment.adapter = commentAdapter
+                }
                 is Resource.Error -> logError(it.message.toString(), "Get all comment")
             }
         }
